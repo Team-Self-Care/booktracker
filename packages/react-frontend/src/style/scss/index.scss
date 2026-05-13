@@ -1,0 +1,169 @@
+// index.scss
+// - Main SCSS file for modifying bulk page units.
+
+@use "./lib.scss";
+@use "./modals.scss";
+@use "./keyframes.scss";
+
+nav {
+    @include lib.flex;
+
+    background: lib.$p1;
+    height: 9vh;
+    position: fixed;
+    width: 100%;
+
+    header {
+        @include lib.font-header(400);
+
+        color: lib.$white;
+        font-size: clamp(1.5rem, 5vw, 2.5rem); 
+        margin-left: 5%;
+        margin-right: 5%;
+    }
+
+    .tabs {
+        @include lib.flex;
+        width: 20%;
+
+        a {
+            @include lib.font-header(700);
+
+            border-radius: 0.5rem;
+            font-size: clamp(0.7rem, 0.9vw, 1.3rem); 
+            color: white;
+            margin-left: 5%;
+            margin-right: 5%;
+            padding: 3%;
+            padding-left: 5%;
+            padding-right: 5%;
+        }
+    }
+
+    .account {
+        @include lib.flex;
+
+        width: 20%;
+
+        a {
+            @include lib.font-header(700);
+
+            border-radius: 5rem;
+            border: 0.5px solid lib.$white;
+            font-size: clamp(0.7rem, 0.9vw, 1.3rem); 
+            color: white;
+            margin-left: 5%;
+            margin-right: 5%;
+            padding: 1%;
+            padding-left: 5%;
+            padding-right: 5%;
+            transition: 
+                background 0.1s, 
+                color 0.1s, 
+                padding-left 0.1s ease-out, 
+                padding-right 0.1s ease-out;
+
+            &:hover {
+                background: lib.$p2;
+                color: lib.$txt-d;
+                padding-left: 6%;
+                padding-right: 6%;
+            }
+        }
+    }
+}
+
+.landing {
+    @include lib.flex;
+
+    height: 100vh;
+    width: 100vw;
+
+    .info {
+        @include lib.flex;
+        @include lib.flex-column;
+        align-items: flex-start;
+        height: 40%;
+        width: 30%;
+
+        h1, h2 {
+            @include lib.font-header(700);
+
+            color: lib.$txt-l;
+            font-size: clamp(2rem, 6vw, 5rem); 
+            line-height: 90%;
+        }
+
+        h2 {
+            color: lib.$txt-d;
+            font-style: italic;
+            margin-left: 10%;
+        }
+
+        p {
+            @include lib.font-normal(300);
+
+            color: lib.$black;
+            font-size: clamp(0.7rem, 3vw, 1.5rem); 
+            margin-top: 5%;
+            width: 100%;
+
+            span {
+                @include lib.font-header(700);
+
+                color: lib.$p1;
+                font-style: italic;
+            }
+        }
+
+        .buttons {
+            @include lib.flex;
+            align-items: flex-start;
+            margin-top: 3%;
+            width: 50%;
+            
+            a {
+                @include lib.flex;
+                @include lib.font-header(700);
+                
+                border-radius: 5rem;
+                border: 0.5px solid lib.$txt-d;
+                font-size: clamp(0.7rem, 0.9vw, 1.3rem); 
+                color: lib.$black;
+                margin-left: 4%;
+                padding: 2%;
+                padding-left: 6%;
+                padding-right: 6%;
+                transition: 
+                    background 0.1s, 
+                    color 0.1s, 
+                    padding-left 0.1s ease-out, 
+                    padding-right 0.1s ease-out;
+
+                &:hover {
+                    background: lib.$p2;
+                    color: lib.$txt-d;
+                    padding-left: 7%;
+                    padding-right: 7%;
+                }
+            }
+        }
+    }
+
+    .modals {
+        @include lib.flex;
+        @include lib.flex-column;
+        @include keyframes.landing-page-anim;
+
+        height: 40%;
+        width: 40%;
+
+        .profile, .book, .review {
+            margin-top: 3%;
+        }
+
+        .profile { @include modals.profile; }
+        .book { @include modals.book; }
+        .review { @include modals.review; }
+    }
+}
