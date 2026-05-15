@@ -8,5 +8,9 @@
 	"main": "backend.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"dependencies": {
+		"dotenv": "^17.4.2",
+		"mongodb": "^7.2.0"
 	}
 }
