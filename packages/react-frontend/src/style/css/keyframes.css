@@ -1,26 +1,26 @@
 @keyframes profile-shift {
-  0% {
-    margin-right: 20%;
-  }
-  100% {
-    margin-right: 25%;
-  }
+	0% {
+		margin-right: 20%;
+	}
+	100% {
+		margin-right: 25%;
+	}
 }
 @keyframes book-shift {
-  0% {
-    margin-left: 10%;
-  }
-  100% {
-    margin-left: 6%;
-  }
+	0% {
+		margin-left: 10%;
+	}
+	100% {
+		margin-left: 6%;
+	}
 }
 @keyframes review-shift {
-  0% {
-    margin-left: 2%;
-  }
-  100% {
-    margin-left: 8%;
-  }
+	0% {
+		margin-left: 2%;
+	}
+	100% {
+		margin-left: 8%;
+	}
 }
 
 /*# sourceMappingURL=keyframes.css.map */

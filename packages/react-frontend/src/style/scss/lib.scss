@@ -3,7 +3,7 @@
 // and commonly used mixins / templates. -
 
 // Imports
-@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&display=swap');
 
 /* Colors */
@@ -13,7 +13,7 @@ $p1: rgb(110, 91, 140); // Primary button colors
 $p2: rgb(241, 236, 247); // Secondary button colors
 
 // Text
-$black: rgb(29, 27, 32); // Themed black 
+$black: rgb(29, 27, 32); // Themed black
 $black-tns: rgba(29, 27, 32, 0.1); // Themed black (transparent)
 $white: rgb(255, 255, 255); // Themed white
 $txt-d: rgb(77, 63, 96); // Dark purple text
@@ -24,40 +24,40 @@ $txt-ll: rgb(231, 226, 236); // Lighter purple text
 
 // Font display types
 @mixin font-header($weight: normal) {
-    font-family: 'Fraunces', Times, serif;
-    font-optical-sizing: auto;
-    font-style: normal;
-    font-variation-settings:
-        "SOFT" 0,
-        "WONK" 0;
-    font-weight: $weight;
+	font-family: 'Fraunces', Times, serif;
+	font-optical-sizing: auto;
+	font-style: normal;
+	font-variation-settings:
+		'SOFT' 0,
+		'WONK' 0;
+	font-weight: $weight;
 }
 
 @mixin font-normal($weight: normal) {
-    font-family: 'Inter', sans-serif;
-    font-optical-sizing: auto;
-    font-style: normal;
-    font-weight: $weight;
+	font-family: 'Inter', sans-serif;
+	font-optical-sizing: auto;
+	font-style: normal;
+	font-weight: $weight;
 }
 
 // Flex alignment mixins for web layout
 
 @mixin flex {
-    align-items: center;
-    display: flex;
-    justify-content: center;
+	align-items: center;
+	display: flex;
+	justify-content: center;
 }
 
 @mixin flex-column {
-    flex-direction: column;
+	flex-direction: column;
 }
 
 // Image background cover shorthand
 
 @mixin cover-background {
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
 }
 
 // Web scaling queries
@@ -65,31 +65,31 @@ $phone-size: 600;
 $tablet-size: 800;
 $desktop-size: 1280;
 
-@mixin phone { 
-    @media only screen and (min-width: ($phone-size * 1px)) {
-        @content;
-    }
+@mixin phone {
+	@media only screen and (min-width: ($phone-size * 1px)) {
+		@content;
+	}
 }
 
-@mixin tablet { 
-    @media only screen and (min-width: ($tablet-size * 1px)) {
-        @content;
-    }
+@mixin tablet {
+	@media only screen and (min-width: ($tablet-size * 1px)) {
+		@content;
+	}
 }
 
-@mixin desktop { 
-    @media only screen and (min-width: ($desktop-size * 1px)) {
-        @content;
-    }
+@mixin desktop {
+	@media only screen and (min-width: ($desktop-size * 1px)) {
+		@content;
+	}
 }
 
 /* Basic Ruleset */
 
 * {
-    margin: 0;
-    padding: 0;
+	margin: 0;
+	padding: 0;
 
-    &::selection { 
-        background: $black-tns;
-    }
+	&::selection {
+		background: $black-tns;
+	}
 }
