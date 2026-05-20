@@ -1,32 +1,32 @@
 {
-  "name": "booktracker",
-  "version": "1.0.0",
-  "description": "",
-  "homepage": "https://github.com/Team-Self-Care/booktracker#readme",
-  "bugs": {
-    "url": "https://github.com/Team-Self-Care/booktracker/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Team-Self-Care/booktracker.git"
-  },
-  "license": "ISC",
-  "author": "",
-  "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
-  "scripts": {
-    "lint": "eslint . && prettier --check .",
-    "format": "prettier --write .",
-    "test": "echo \"No tests yet\"",
-    "build": "npm run -w react-frontend build"
-  },
-  "devDependencies": {
-    "eslint": "^9.20.0",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-react": "^7.37.5",
-    "globals": "^17.5.0",
-    "prettier": "^3.8.3"
-  }
+	"name": "booktracker",
+	"version": "1.0.0",
+	"description": "",
+	"homepage": "https://github.com/Team-Self-Care/booktracker#readme",
+	"bugs": {
+		"url": "https://github.com/Team-Self-Care/booktracker/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Team-Self-Care/booktracker.git"
+	},
+	"license": "ISC",
+	"author": "",
+	"private": true,
+	"workspaces": [
+		"packages/*"
+	],
+	"scripts": {
+		"lint": "eslint . && prettier --check .",
+		"format": "prettier --write .",
+		"test": "echo \"No tests yet\"",
+		"build": "npm run -w react-frontend build"
+	},
+	"devDependencies": {
+		"eslint": "^9.20.0",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-react": "^7.37.5",
+		"globals": "^17.5.0",
+		"prettier": "^3.8.3"
+	}
 }
