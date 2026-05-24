@@ -17,6 +17,7 @@
 		"packages/*"
 	],
 	"scripts": {
+		"dev": "npm run -w react-frontend dev",
 		"lint": "eslint . && prettier --check .",
 		"format": "prettier --write .",
 		"test": "echo \"No tests yet\"",

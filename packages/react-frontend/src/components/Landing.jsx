@@ -1,11 +1,9 @@
-import { useState } from 'react';
 import Book from './modals/Book';
-import Navbar from './Navbar';
 import Profile from './modals/Profile';
 import Review from './modals/Review';
 import '../style/css/index.css';
 
-function Landing() {
+function Landing({ onNavigate }) {
 	return (
 		<main className="landing">
 			<section className="info">
@@ -17,8 +15,12 @@ function Landing() {
 					librarian, and social community of readers, all under one cover.
 				</p>
 				<div className="buttons">
-					<a>Step In</a>
-					<a>Learn More</a>
+					<button onClick={() => onNavigate('Search')} type="button">
+						Step In
+					</button>
+					<button onClick={() => onNavigate('Reviews')} type="button">
+						Learn More
+					</button>
 				</div>
 			</section>
 
@@ -27,7 +29,7 @@ function Landing() {
 
 				<Book
 					title="The Hobbit"
-					author="J. R. R. Tolkein"
+					author="J. R. R. Tolkien"
 					tag="Literary Fantasy"
 					genres={['Fantasy', 'Adventure']}
 				/>
