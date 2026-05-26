@@ -7,14 +7,16 @@
 		"dev": "vite",
 		"build": "vite build",
 		"lint": "eslint .",
-		"preview": "vite preview"
+		"preview": "vite preview",
+		"watch-sass": "sass --watch ./src/style/scss:./src/style/css",
+		"test": "echo \"No frontend tests yet\""
 	},
 	"dependencies": {
 		"react": "^19.2.5",
 		"react-dom": "^19.2.5"
 	},
 	"devDependencies": {
-		"@eslint/js": "^10.0.1",
+		"@eslint/js": "^9.20.0",
 		"@types/react": "^19.2.14",
 		"@types/react-dom": "^19.2.3",
 		"@vitejs/plugin-react": "^6.0.1",

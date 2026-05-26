@@ -1,0 +1,180 @@
+// modals.scss
+// - Library file for storing larger reuseable components,
+// such as profile or review modals.
+
+@use './lib.scss';
+
+@mixin review {
+	@include lib.flex;
+	@include lib.flex-column;
+	@include lib.font-normal(300);
+
+	align-items: flex-start;
+	border: 1px solid lib.$txt-ll;
+	border-radius: 1rem;
+	padding: 2% 4% 2% 4%;
+	width: 50%;
+
+	.title {
+		@include lib.font-header(700);
+
+		color: lib.$black;
+		font-size: clamp(1rem, 3vw, 1.6rem);
+	}
+
+	.content {
+		margin-bottom: 3%;
+		margin-top: 3%;
+	}
+
+	.details {
+		@include lib.flex;
+		color: lib.$txt-d;
+		width: 100%;
+
+		p {
+			width: 100%;
+			white-space: nowrap;
+		}
+
+		a {
+			@include lib.flex;
+			@include lib.font-header(700);
+
+			background: lib.$p2;
+			border-radius: 5rem;
+			font-size: clamp(0.7rem, 0.9vw, 1.3rem);
+			color: lib.$black;
+			margin-left: 4%;
+			padding: 2%;
+			padding-left: 6%;
+			padding-right: 6%;
+			width: 30%;
+		}
+	}
+}
+
+@mixin profile {
+	@include lib.flex;
+	@include lib.font-normal(300);
+
+	align-items: flex-start;
+	background: lib.$txt-ll;
+	border: 1px solid lib.$txt-ll;
+	border-radius: 1rem;
+	padding: 2% 6% 2% 3%;
+	width: 36%;
+
+	.centered {
+		@include lib.flex;
+		@include lib.flex-column;
+		height: 100%;
+
+		.icon {
+			@include lib.flex;
+
+			aspect-ratio: 1;
+			background: lib.$txt-d;
+			border-radius: 100%;
+			color: lib.$white;
+			font-size: clamp(0.4rem, 0.6vw, 1rem);
+			height: 80%;
+		}
+	}
+
+	.details {
+		@include lib.flex;
+		@include lib.flex-column;
+
+		color: lib.$txt-d;
+		margin-left: 7%;
+		text-align: left;
+		width: 60%;
+
+		.username {
+			@include lib.font-normal(800);
+			color: lib.$black;
+			font-size: clamp(0.7rem, 1.2vw, 1.5rem);
+			width: 100%;
+		}
+
+		.stats {
+			@include lib.font-normal(300);
+			color: lib.$black;
+			font-size: clamp(0.8rem, 0.8vw, 1.2rem);
+			white-space: nowrap;
+			width: 100%;
+		}
+
+		a {
+			@include lib.flex;
+			@include lib.font-header(700);
+
+			background: lib.$p1;
+			border-radius: 5rem;
+			font-size: clamp(0.7rem, 0.9vw, 1.3rem);
+			color: lib.$white;
+			margin-top: 6%;
+			padding: 5%;
+			padding-left: 6%;
+			padding-right: 6%;
+			width: 90%;
+		}
+	}
+}
+
+@mixin book {
+	@include lib.flex;
+	@include lib.font-normal(300);
+
+	border: 1px solid lib.$txt-ll;
+	border-radius: 1rem;
+	padding: 3% 4% 3% 4%;
+	width: 50%;
+
+	.cover {
+		aspect-ratio: 1 / 1.5;
+		background: lib.$txt-ll;
+		border-radius: 0.2rem;
+		padding: 2%;
+		height: 100%;
+		margin-right: 2%;
+	}
+
+	.details {
+		@include lib.font-normal(300);
+
+		color: lib.$txt-d;
+		margin-left: 4%;
+		width: 100%;
+
+		.title {
+			@include lib.font-normal(500);
+			color: lib.$black;
+			font-size: clamp(1rem, 2vw, 1.4rem);
+		}
+
+		.content {
+			text-align: start;
+			width: 30%;
+			white-space: nowrap;
+		}
+
+		.genres {
+			margin-top: 4%;
+			a {
+				@include lib.font-normal(600);
+
+				background: lib.$p1;
+				border-radius: 5rem;
+				font-size: clamp(0.7rem, 0.8vw, 1.3rem);
+				color: lib.$white;
+				margin-right: 2%;
+				padding: 2.3%;
+				padding-left: 5%;
+				padding-right: 5%;
+				width: 30%;
+			}
+		}
+	}
+}

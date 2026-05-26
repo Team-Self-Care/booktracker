@@ -1,0 +1,44 @@
+// keyframes.scss
+// - Stores all keyframes + animation classes to apply to
+// bulk blocks with multiple moving units.
+
+@keyframes profile-shift {
+	0% {
+		margin-right: 20%;
+	}
+	100% {
+		margin-right: 25%;
+	}
+}
+
+@keyframes book-shift {
+	0% {
+		margin-left: 10%;
+	}
+	100% {
+		margin-left: 6%;
+	}
+}
+
+@keyframes review-shift {
+	0% {
+		margin-left: 2%;
+	}
+	100% {
+		margin-left: 8%;
+	}
+}
+
+@mixin landing-page-anim {
+	.profile {
+		animation: 18s ease-in-out infinite alternate profile-shift;
+	}
+
+	.book {
+		animation: 12s ease-in-out infinite alternate book-shift;
+	}
+
+	.review {
+		animation: 16s ease-in-out infinite alternate review-shift;
+	}
+}

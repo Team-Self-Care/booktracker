@@ -7,10 +7,17 @@
 	"type": "commonjs",
 	"main": "backend.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"start": "node backend.js",
+		"dev": "nodemon backend.js",
+		"test": "echo \"No backend tests yet\"",
+		"lint": "echo \"No backend lint configured\""
 	},
 	"dependencies": {
+		"express": "^5.1.0",
 		"dotenv": "^17.4.2",
 		"mongodb": "^7.2.0"
+	},
+	"devDependencies": {
+		"nodemon": "^3.1.10"
 	}
 }
