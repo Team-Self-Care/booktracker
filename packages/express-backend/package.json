@@ -13,7 +13,9 @@
 		"lint": "echo \"No backend lint configured\""
 	},
 	"dependencies": {
-		"express": "^5.1.0"
+		"express": "^5.1.0",
+		"dotenv": "^17.4.2",
+		"mongodb": "^7.2.0"
 	},
 	"devDependencies": {
 		"nodemon": "^3.1.10"
