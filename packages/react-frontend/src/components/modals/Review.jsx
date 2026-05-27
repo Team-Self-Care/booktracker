@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import '../../style/css/index.css';
 
 function Review(props) {
@@ -8,9 +7,11 @@ function Review(props) {
 			<p className="content">{props.review}</p>
 			<footer className="details">
 				<p>
-					{props.comments} comments • {props.rating} rating
+					{props.comments} comments . {props.rating} rating
 				</p>
-				<a className="button">Comment</a>
+				<button className="button" type="button">
+					Comment
+				</button>
 			</footer>
 		</div>
 	);

@@ -1,20 +1,33 @@
-import { useState } from 'react';
 import '../style/css/index.css';
 
-function Navbar() {
+const visibleTabs = ['Home', 'Search', 'Reviews'];
+
+function Navbar({ activePage, currentUser, onNavigate }) {
 	return (
 		<nav className="navbar">
 			<header>booktracker</header>
 
-			<section class="tabs">
-				<a>Home</a>
-				<a>Search</a>
-				<a>Lists</a>
-				<a>Reviews</a>
+			<section className="tabs">
+				{visibleTabs.map((tab) => (
+					<button
+						className={activePage === tab ? 'active' : ''}
+						key={tab}
+						onClick={() => onNavigate(tab)}
+						type="button"
+					>
+						{tab}
+					</button>
+				))}
 			</section>
 
-			<div class="account">
-				<a>Account</a>
+			<div className="account">
+				<button
+					className={activePage === 'Account' ? 'active' : ''}
+					onClick={() => onNavigate('Account')}
+					type="button"
+				>
+					{currentUser ? currentUser.username : 'Account'}
+				</button>
 			</div>
 		</nav>
 	);
