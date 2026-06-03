@@ -1,11 +1,11 @@
 import '../style/css/index.css';
-
-const visibleTabs = ['Home', 'Search', 'Reviews'];
+import logo from './logo.png';
+const visibleTabs = ['Home', 'Search', 'List', 'Reviews'];
 
 function Navbar({ activePage, currentUser, onNavigate }) {
 	return (
 		<nav className="navbar">
-			<header>booktracker</header>
+			<img src={logo} className="Nav_logo" alt="logo" />
 
 			<section className="tabs">
 				{visibleTabs.map((tab) => (

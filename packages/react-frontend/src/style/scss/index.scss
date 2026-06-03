@@ -376,7 +376,11 @@ button {
 .page-wrap {
 	align-items: start;
 	background:
-		linear-gradient(180deg, rgba(241, 236, 247, 0.74), rgba(255, 255, 255, 0.94)),
+		linear-gradient(
+			180deg,
+			rgba(241, 236, 247, 0.74),
+			rgba(255, 255, 255, 0.94)
+		),
 		var(--wash);
 	display: flex;
 	justify-content: center;
@@ -871,7 +875,11 @@ button {
 
 .auth-copy {
 	background:
-		linear-gradient(135deg, rgba(110, 91, 140, 0.14), rgba(241, 236, 247, 0.72)),
+		linear-gradient(
+			135deg,
+			rgba(110, 91, 140, 0.14),
+			rgba(241, 236, 247, 0.72)
+		),
 		var(--paper);
 	min-height: 280px;
 }

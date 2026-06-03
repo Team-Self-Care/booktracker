@@ -36,7 +36,9 @@ function UserPage({ currentUser, onLogout, onSubmit }) {
 							<p>Account</p>
 							<h1>Welcome back, {currentUser.username}.</h1>
 						</div>
-						<div className="avatar">{currentUser.username.slice(0, 2).toUpperCase()}</div>
+						<div className="avatar">
+							{currentUser.username.slice(0, 2).toUpperCase()}
+						</div>
 					</header>
 
 					<div className="account-layout">
@@ -54,7 +56,11 @@ function UserPage({ currentUser, onLogout, onSubmit }) {
 								<span>Email</span>
 								<strong>{currentUser.email || 'Not added yet'}</strong>
 							</div>
-							<button className="secondary-action" onClick={onLogout} type="button">
+							<button
+								className="secondary-action"
+								onClick={onLogout}
+								type="button"
+							>
 								Log out
 							</button>
 						</section>
@@ -78,7 +84,11 @@ function UserPage({ currentUser, onLogout, onSubmit }) {
 				<header className="page-header">
 					<div>
 						<p>Account</p>
-						<h1>{mode === 'login' ? 'Log in to keep reading.' : 'Create your reader name.'}</h1>
+						<h1>
+							{mode === 'login'
+								? 'Log in to keep reading.'
+								: 'Create your reader name.'}
+						</h1>
 					</div>
 					<div className="avatar">BT</div>
 				</header>

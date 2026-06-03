@@ -1,4 +1,11 @@
-const filters = ['4+ rating', 'Quest', 'Found family', 'Fantasy', 'Cozy', 'Coming of age'];
+const filters = [
+	'4+ rating',
+	'Quest',
+	'Found family',
+	'Fantasy',
+	'Cozy',
+	'Coming of age',
+];
 
 const results = [
 	{
@@ -87,23 +94,25 @@ function Search({ currentUser, onNavigate }) {
 									<div className="cover-block" />
 									<div>
 										<h3>{book.title}</h3>
-									<p>
-										{book.author} . {book.meta}
-									</p>
-									<span>{book.tag}</span>
-								</div>
-								<div className="result-actions">
-									<strong>{book.rating}</strong>
-									<button
-										onClick={() => onNavigate(currentUser ? 'Reviews' : 'Account')}
-										type="button"
-									>
-										Review
-									</button>
-								</div>
-							</article>
-						))}
-					</div>
+										<p>
+											{book.author} . {book.meta}
+										</p>
+										<span>{book.tag}</span>
+									</div>
+									<div className="result-actions">
+										<strong>{book.rating}</strong>
+										<button
+											onClick={() =>
+												onNavigate(currentUser ? 'Reviews' : 'Account')
+											}
+											type="button"
+										>
+											Review
+										</button>
+									</div>
+								</article>
+							))}
+						</div>
 					</section>
 				</div>
 			</section>
