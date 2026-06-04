@@ -57,7 +57,8 @@ function Reviews({ currentUser, onNavigate }) {
 	const selectedBookComments = selectedBookTitle
 		? allReviews.filter((review) => review.title === selectedBookTitle)
 		: [];
-	const featuredUser = addedUsers.find((user) => user === selectedUser) ?? addedUsers[0];
+	const featuredUser =
+		addedUsers.find((user) => user === selectedUser) ?? addedUsers[0];
 	const userInitials = currentUser
 		? currentUser.username.slice(0, 2).toUpperCase()
 		: 'JL';
@@ -136,12 +137,16 @@ function Reviews({ currentUser, onNavigate }) {
 								<h2>{featuredUser}</h2>
 								<p>
 									{
-										allReviews.filter((review) => review.username === featuredUser)
-											.length
+										allReviews.filter(
+											(review) => review.username === featuredUser
+										).length
 									}{' '}
 									public reviews
 								</p>
-								<button onClick={() => setSelectedUser(featuredUser)} type="button">
+								<button
+									onClick={() => setSelectedUser(featuredUser)}
+									type="button"
+								>
 									View reviews
 								</button>
 							</div>
@@ -159,7 +164,9 @@ function Reviews({ currentUser, onNavigate }) {
 								</button>
 								{addedUsers.map((user) => (
 									<button
-										className={selectedUser === user ? 'chip is-active' : 'chip'}
+										className={
+											selectedUser === user ? 'chip is-active' : 'chip'
+										}
 										key={user}
 										onClick={() => setSelectedUser(user)}
 										type="button"
@@ -239,7 +246,10 @@ function Reviews({ currentUser, onNavigate }) {
 										<p>Comments for</p>
 										<h2>{selectedBookTitle}</h2>
 									</div>
-									<button onClick={() => setSelectedBookTitle(null)} type="button">
+									<button
+										onClick={() => setSelectedBookTitle(null)}
+										type="button"
+									>
 										Close
 									</button>
 								</header>
