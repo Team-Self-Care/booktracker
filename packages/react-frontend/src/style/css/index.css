@@ -337,7 +337,7 @@ button {
 	color: var(--paper);
 }
 
-.review {
+.book-list {
 	align-items: flex-start;
 	display: flex;
 	flex-direction: column;

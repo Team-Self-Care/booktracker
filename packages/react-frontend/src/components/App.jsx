@@ -3,7 +3,7 @@ import Landing from './Landing';
 import Navbar from './Navbar';
 import Reviews from './Reviews';
 import Search from './Search';
-import Table from './List';
+import Table from './Library';
 import UserPage from './UserPage';
 import '../style/css/index.css';
 
@@ -32,7 +32,7 @@ function App() {
 		Home: <Landing onNavigate={setActivePage} />,
 		Search: <Search currentUser={currentUser} onNavigate={setActivePage} />,
 		Reviews: <Reviews currentUser={currentUser} onNavigate={setActivePage} />,
-		List: <Table currentUser={currentUser} onNavigate={setActivePage} />,
+		Library: <Table currentUser={currentUser} onNavigate={setActivePage} />,
 		Account: (
 			<UserPage
 				currentUser={currentUser}

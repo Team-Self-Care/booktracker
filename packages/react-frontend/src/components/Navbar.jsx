@@ -1,6 +1,6 @@
 import '../style/css/index.css';
 import logo from './logo.png';
-const visibleTabs = ['Home', 'Search', 'List', 'Reviews'];
+const visibleTabs = ['Home', 'Search', 'Library', 'Reviews'];
 
 function Navbar({ activePage, currentUser, onNavigate }) {
 	return (
