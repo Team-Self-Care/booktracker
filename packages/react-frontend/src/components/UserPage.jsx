@@ -23,27 +23,27 @@ function UserPage({ currentUser, onLogout, onSubmit }) {
 		const username = (form.username || fallbackName || 'Reader').trim();
 
 		if (mode === 'login') {
-			loginUser(form.email, form.password) 
-			.then((data) => {
-				onSubmit({
-				email: form.email,
-				username: data.name,
+			loginUser(form.email, form.password)
+				.then((data) => {
+					onSubmit({
+						email: form.email,
+						username: data.name,
+					});
+				})
+				.catch((error) => {
+					console.log(error);
 				});
-			})
-			.catch((error) => {
-				console.log(error);
-			});
 		} else {
 			registerUser(form.username, form.email, form.password)
-			.then((data) => {
-				onSubmit({
-				email: form.email,
-				username: form.username,
+				.then((data) => {
+					onSubmit({
+						email: form.email,
+						username: form.username,
+					});
+				})
+				.catch((error) => {
+					console.log(error);
 				});
-			})
-			.catch((error) => {
-				console.log(error);
-			});
 		}
 	};
 
