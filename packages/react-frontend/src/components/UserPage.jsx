@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { loginUser, registerUser } from '../user';
 
 function UserPage({ currentUser, onLogout, onSubmit }) {
 	const [mode, setMode] = useState('login');
@@ -21,10 +22,29 @@ function UserPage({ currentUser, onLogout, onSubmit }) {
 		const fallbackName = form.email.split('@')[0];
 		const username = (form.username || fallbackName || 'Reader').trim();
 
-		onSubmit({
-			email: form.email,
-			username,
-		});
+		if (mode === 'login') {
+			loginUser(form.email, form.password) 
+			.then((data) => {
+				onSubmit({
+				email: form.email,
+				username: data.name,
+				});
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+		} else {
+			registerUser(form.username, form.email, form.password)
+			.then((data) => {
+				onSubmit({
+				email: form.email,
+				username: form.username,
+				});
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+		}
 	};
 
 	if (currentUser) {
