@@ -15,6 +15,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/users', (req, res) => {
+	//get all users
 	connectDB()
 		.then(({ db }) => db.collection('users').find({}).toArray())
 		.then((result) => res.send({ users_list: result }))
@@ -22,6 +23,7 @@ app.get('/users', (req, res) => {
 });
 
 app.get('/users/:name', (req, res) => {
+	//get user by name
 	const name = req.params['name'];
 	connectDB()
 		.then(({ db }) => db.collection('users').findOne({ name: name }))
@@ -36,20 +38,25 @@ app.get('/users/:name', (req, res) => {
 });
 
 app.post('/users', (req, res) => {
-	const { name, password } = req.body;
+	//register a new user (with email, name, password)
+	const { name, email, password } = req.body;
 
 	if (
 		name === undefined ||
 		name === '' ||
 		password === undefined ||
-		password === ''
+		password === '' ||
+		email === undefined ||
+		email === ''
 	) {
-		res.status(400).send({ error: 'Name and password required' });
+		res.status(400).send({ error: 'Name, email, and password required' });
 		return;
 	}
 
 	connectDB()
-		.then(({ db }) => db.collection('users').insertOne({ name, password }))
+		.then(({ db }) =>
+			db.collection('users').insertOne({ name, email, password })
+		)
 		.then((result) =>
 			res.status(201).send({ id: result.insertedId, name: name })
 		)
@@ -57,11 +64,12 @@ app.post('/users', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-	const { name, password } = req.body;
+	//login user
+	const { email, password } = req.body;
 
 	connectDB()
 		.then(({ db }) =>
-			db.collection('users').findOne({ name: name, password: password })
+			db.collection('users').findOne({ email: email, password: password })
 		)
 		.then((user) => {
 			if (user) {
