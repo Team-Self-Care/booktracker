@@ -25,3 +25,6 @@ To Check In Code:
 
 1. npm run format - to fix formatting of code
 2. npm run lint - to check for coding errors
+
+Class Diagrams:
+[Class Diagram Documentation](DIAGRAMS.md)
