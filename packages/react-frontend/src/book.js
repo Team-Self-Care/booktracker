@@ -1,4 +1,4 @@
-const API_URL = 'https://csc307-booktracker-hya2bfh2bgfxd2dk.eastus-01.azurewebsites.net/';
+const API_URL = 'https://csc307-booktracker-hya2bfh2bgfxd2dk.eastus-01.azurewebsites.net';
 
 //get all books for a user
 export async function fetchBooks(userId) {
