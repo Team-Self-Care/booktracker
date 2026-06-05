@@ -57,12 +57,12 @@ function App() {
 	};
 
 	const handleAddToLibrary = async (book, status = 'Want to read') => {
-		console.log('Current user object:', currentUser);
-		console.log('Current user ID:', currentUser?._id);
-		console.log('Current user id (lowercase):', currentUser.id);
-
-		const bookId = book.id ?? `${book.title}-${book.author}`;
-
+		let bookId;
+		if (book.id !== undefined && book.id !== null) {
+			bookId = book.id;
+		} else {
+			bookId = `${book.title}-${book.author}`;
+		}
 		try {
 			await addBook({
 				id: bookId,
