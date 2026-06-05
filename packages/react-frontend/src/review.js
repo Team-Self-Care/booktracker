@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8000';
+const API_URL = 'https://csc307-booktracker-hya2bfh2bgfxd2dk.eastus-01.azurewebsites.net/';
 
 //get all reviews
 export async function fetchReviews() {
