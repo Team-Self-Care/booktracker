@@ -1,129 +1,275 @@
-import React from 'react';
+import { useState } from 'react';
 import '../style/css/index.css';
-const filters = [
-	'4+ rating',
-	'Quest',
-	'Found family',
-	'Fantasy',
-	'Cozy',
-	'Coming of age',
-];
-const testbooks = [
-	{
-		Title: 'Lord of the Rings ',
-		Author: 'J.R.R Tolkin ',
-		Genre: 'Adult Fantasy ',
-		Trope: 'Found Family ',
-		Status: 'Complete ',
-		Start_Date: '04/23/26 ',
-		End_Date: '05/22/26 ',
-		Reading_Level: '11th grade + ',
-	},
-	{
-		Title: 'Pride and Prejudice ',
-		Author: 'Jane Austen ',
-		Genre: 'Historical Fiction ',
-		Trope: 'Enemies to Lovers ',
-		Status: 'Complete ',
-		Start_Date: '04/23/26 ',
-		End_Date: '05/22/26 ',
-		Reading_Level: '9th grade + ',
-	},
-	{
-		Title: 'Six of Crows ',
-		Author: 'Leigh Bardugo ',
-		Genre: 'YA Fantasy ',
-		Trope: 'found family ',
-		Status: 'Complete ',
-		Start_Date: '04/23/26 ',
-		End_Date: '05/22/26 ',
-		Reading_Level: '7th grade + ',
-	},
 
+const statuses = ['Want to read', 'Reading', 'Finished', 'Paused'];
+
+const sampleBooks = [
 	{
-		Title: 'The Hunger Games',
-		Author: 'Susan Collins ',
-		Genre: 'YA Fantasy ',
-		Trope: 'Distopia ',
-		Status: 'Complete ',
-		Start_Date: '06/23/24 ',
-		End_Date: '07/22/24 ',
-		Reading_Level: '7th grade + ',
+		id: 'sample-lotr',
+		title: 'The Lord of the Rings',
+		author: 'J. R. R. Tolkien',
+		description:
+			'A long-form fantasy classic for readers who like maps, quests, and fellowship.',
+		meta: 'Epic fantasy',
+		publishedDate: '1954',
+		rating: '4.8',
+		tag: 'Found family',
+		thumbnail: '',
+	},
+	{
+		id: 'sample-pride',
+		title: 'Pride and Prejudice',
+		author: 'Jane Austen',
+		description:
+			'A sharp social romance with memorable dialogue and enduring character work.',
+		meta: 'Classic fiction',
+		publishedDate: '1813',
+		rating: '4.6',
+		tag: 'Romance',
+		thumbnail: '',
+	},
+	{
+		id: 'sample-crows',
+		title: 'Six of Crows',
+		author: 'Leigh Bardugo',
+		description:
+			'A fast ensemble heist with morally gray characters and strong group dynamics.',
+		meta: 'YA fantasy',
+		publishedDate: '2015',
+		rating: '4.5',
+		tag: 'Heist',
+		thumbnail: '',
 	},
 ];
 
-function Table({ currentUser, onNavigate }) {
+function Library({
+	currentUser,
+	libraryBooks,
+	onAddSampleBook,
+	onNavigate,
+	onRemoveBook,
+	onUpdateBook,
+}) {
+	const [query, setQuery] = useState('');
+	const userInitials = currentUser
+		? currentUser.username.slice(0, 2).toUpperCase()
+		: 'JL';
+	const savedSampleIds = new Set(libraryBooks.map((book) => book.id));
+	const activeBooks = libraryBooks.filter((book) => {
+		const haystack =
+			`${book.title} ${book.author} ${book.tag} ${book.status ?? ''}`.toLowerCase();
+		return haystack.includes(query.toLowerCase());
+	});
+	const favoriteCount = libraryBooks.filter((book) => book.isFavorite).length;
+	const readingCount = libraryBooks.filter(
+		(book) => book.status === 'Reading'
+	).length;
+	const finishedCount = libraryBooks.filter(
+		(book) => book.status === 'Finished'
+	).length;
+
+	const handleFilter = (event) => {
+		event.preventDefault();
+		const formData = new FormData(event.currentTarget);
+		setQuery(formData.get('query').toString().trim());
+	};
+
+	const handleAddSample = (book) => {
+		if (!currentUser) {
+			onNavigate('Account');
+			return;
+		}
+
+		onAddSampleBook(book, 'Want to read');
+	};
+
 	return (
 		<main className="page-wrap">
 			<section className="web-page search-page">
 				<header className="page-header">
 					<div>
 						<p>Library</p>
-						<h1>Track Your Reading.</h1>
+						<h1>Track your reading shelf.</h1>
 					</div>
+					<div className="avatar">{userInitials}</div>
 				</header>
+
+				<div className="library-stats">
+					<article>
+						<strong>{libraryBooks.length}</strong>
+						<span>saved books</span>
+					</article>
+					<article>
+						<strong>{readingCount}</strong>
+						<span>currently reading</span>
+					</article>
+					<article>
+						<strong>{finishedCount}</strong>
+						<span>finished</span>
+					</article>
+					<article>
+						<strong>{favoriteCount}</strong>
+						<span>favorites</span>
+					</article>
+				</div>
 
 				<div className="search-layout">
 					<aside className="search-panel">
-						<form className="search-form">
+						<form className="search-form" onSubmit={handleFilter}>
 							<label>
-								Title
-								<input defaultValue=" " />
+								Search your library
+								<input
+									defaultValue={query}
+									name="query"
+									placeholder="Title, author, genre, status..."
+								/>
 							</label>
-							<label>
-								Author
-								<input defaultValue=" " />
-							</label>
-							<label>
-								Start_Date
-								<input defaultValue=" " />
-							</label>
-							<label>
-								End_Date
-								<input defaultValue=" " />
-							</label>
-							<label>
-								Status
-								<input defaultValue=" " />
-							</label>
+							<button className="primary-action" type="submit">
+								Filter Library
+							</button>
 						</form>
 
 						<section className="stack-section">
-							<h2>Filters</h2>
-							<div className="chip-row">
-								{filters.map((filter) => (
-									<button className="chip" key={filter} type="button">
-										{filter}
+							<h2>Starter books</h2>
+							<div className="sample-list">
+								{sampleBooks.map((book) => (
+									<button
+										disabled={savedSampleIds.has(book.id)}
+										key={book.id}
+										onClick={() => handleAddSample(book)}
+										type="button"
+									>
+										<span>{book.title}</span>
+										<small>
+											{savedSampleIds.has(book.id) ? 'Saved' : 'Add'}
+										</small>
 									</button>
 								))}
 							</div>
 						</section>
-
-						<button className="primary-action" type="button">
-							Search Library
-						</button>
 					</aside>
 
 					<section className="results-panel">
 						<div className="section-heading">
-							<span>{testbooks.length} books</span>
+							<div>
+								<h2>My Books</h2>
+								<p>Update progress, mark favorites, and keep private notes.</p>
+							</div>
+							<span>{activeBooks.length} books</span>
 						</div>
-						<div className="result-list">
-							{testbooks.map((book) => (
-								<article className="book-result" key={book.Title}>
-									<div className="cover-block" />
-									<div>
-										<h3>{book.Title}</h3>
-										<p>
-											{book.Author} . {book.Genre}
-										</p>
-										<span>{book.Status}</span>
-										<span>{book.Start_Date}</span>
-										<span>{book.End_Date}</span>
-									</div>
-								</article>
-							))}
-						</div>
+						{!currentUser && (
+							<p className="status-message">
+								Log in to save books from Search and build your personal
+								library.
+							</p>
+						)}
+						{activeBooks.length === 0 ? (
+							<div className="empty-state">
+								<h2>No books here yet.</h2>
+								<p>
+									Search Google Books and save a title, or add one of the
+									starter books from the left panel.
+								</p>
+								<button onClick={() => onNavigate('Search')} type="button">
+									Go to Search
+								</button>
+							</div>
+						) : (
+							<div className="library-list">
+								{activeBooks.map((book) => (
+									<article className="library-book" key={book.id}>
+										<div className="cover-block">
+											{book.thumbnail ? (
+												<img src={book.thumbnail} alt={`${book.title} cover`} />
+											) : (
+												<span>{book.title.slice(0, 1)}</span>
+											)}
+										</div>
+										<div className="library-main">
+											<header>
+												<div>
+													<h3>{book.title}</h3>
+													<p>
+														{book.author} . {book.meta}
+													</p>
+												</div>
+												<button
+													className={
+														book.isFavorite ? 'favorite is-active' : 'favorite'
+													}
+													onClick={() =>
+														onUpdateBook(book.id, {
+															isFavorite: !book.isFavorite,
+														})
+													}
+													type="button"
+												>
+													{book.isFavorite ? 'Liked' : 'Like'}
+												</button>
+											</header>
+											<div className="library-controls">
+												<label>
+													Status
+													<select
+														onChange={(event) =>
+															onUpdateBook(book.id, {
+																status: event.target.value,
+															})
+														}
+														value={book.status ?? 'Want to read'}
+													>
+														{statuses.map((status) => (
+															<option key={status}>{status}</option>
+														))}
+													</select>
+												</label>
+												<label>
+													Progress
+													<input
+														max="100"
+														min="0"
+														onChange={(event) =>
+															onUpdateBook(book.id, {
+																progress: Number(event.target.value),
+															})
+														}
+														type="number"
+														value={book.progress ?? 0}
+													/>
+												</label>
+											</div>
+											<label className="notes-field">
+												Notes
+												<textarea
+													onChange={(event) =>
+														onUpdateBook(book.id, {
+															notes: event.target.value,
+														})
+													}
+													placeholder="Private thoughts, group questions, or reminders..."
+													value={book.notes ?? ''}
+												/>
+											</label>
+											<footer>
+												<span>{book.tag}</span>
+												<button
+													onClick={() => onNavigate('Reviews')}
+													type="button"
+												>
+													Review
+												</button>
+												<button
+													onClick={() => onRemoveBook(book.id)}
+													type="button"
+												>
+													Remove
+												</button>
+											</footer>
+										</div>
+									</article>
+								))}
+							</div>
+						)}
 					</section>
 				</div>
 			</section>
@@ -131,4 +277,4 @@ function Table({ currentUser, onNavigate }) {
 	);
 }
 
-export default Table;
+export default Library;
