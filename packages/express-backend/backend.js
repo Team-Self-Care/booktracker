@@ -37,7 +37,7 @@ app.get('/users/:name', (req, res) => {
 		.catch((error) => res.status(500).send({ error: error.message }));
 });
 
-app.post('/users', (req, res) => {
+app.post('/users', async(req, res) => {
 	//register a new user (with email, name, password)
 	const { name, email, password } = req.body;
 
@@ -53,32 +53,49 @@ app.post('/users', (req, res) => {
 		return;
 	}
 
-	connectDB()
-		.then(({ db }) =>
-			db.collection('users').insertOne({ name, email, password })
-		)
-		.then((result) =>
-			res.status(201).send({ id: result.insertedId, name: name })
-		)
-		.catch((error) => res.status(500).send({ error: error.message }));
+	try {
+		const hashedPassword = await bcrypt.hash(password, 12);
+		const { db } = await connectDB();
+		const result = await db.collection('users').insertOne({
+			name,
+			email,
+			password: hashedPassword
+		});
+		
+		res.status(201).send({id: result.insertedId, name: name});
+
+	}
+	catch(error){
+		res.status(500).send({error: error.message});
+	}
 });
 
-app.post('/login', (req, res) => {
+app.post('/login', async(req, res) => {
 	//login user
 	const { email, password } = req.body;
 
-	connectDB()
-		.then(({ db }) =>
-			db.collection('users').findOne({ email: email, password: password })
-		)
-		.then((user) => {
-			if (user) {
-				res.send({ success: true, name: user.name });
-			} else {
-				res.status(401).send({ error: 'Invalid credentials' });
+	if(!email || !password){
+		return res.status(400).send({error: 'Email and password required'});
+	}
+
+	try{
+		const { db } = await connectDB();
+		const user = await db.collection('users').findOne({email: email});
+
+		if(user){
+			const testPassword = await bcrypt.compare(password, user.password);
+			if(testPassword){
+				res.send({success: true, name: user.name});
 			}
-		})
-		.catch((error) => res.status(500).send({ error: error.message }));
+		}
+		else{
+			res.status(401).send({error: 'Invalid creditals'});
+		}
+	}
+		
+	catch(error){
+		res.status(500).send({error: error.message});
+	}
 });
 
 app.delete('/users/:name', (req, res) => {
