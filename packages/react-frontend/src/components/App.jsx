@@ -64,7 +64,7 @@ function App() {
 		const bookId = book.id ?? `${book.title}-${book.author}`;
 
 		try {
-			const newBook = await addBook({
+			await addBook({
 				id: bookId,
 				title: book.title,
 				author: book.author,

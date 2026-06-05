@@ -18,10 +18,6 @@ function UserPage({ currentUser, onLogout, onSubmit }) {
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
-
-		const fallbackName = form.email.split('@')[0];
-		const username = (form.username || fallbackName || 'Reader').trim();
-
 		if (mode === 'login') {
 			loginUser(form.email, form.password)
 				.then((data) => {

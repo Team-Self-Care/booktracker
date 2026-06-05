@@ -64,13 +64,11 @@ app.post('/users', (req, res) => {
 			db.collection('users').insertOne({ name, email, password })
 		)
 		.then((result) =>
-			res
-				.status(201)
-				.send({
-					id: result.insertedId,
-					name: name,
-					_id: result.insertedId.toString(),
-				})
+			res.status(201).send({
+				id: result.insertedId,
+				name: name,
+				_id: result.insertedId.toString(),
+			})
 		)
 		.catch((error) => {
 			console.log('Database error: ' + error);
