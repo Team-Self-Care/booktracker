@@ -9,6 +9,9 @@ function UserPage({ currentUser, onLogout, onSubmit }) {
 		username: '',
 	});
 
+	const [error, setError] = useState('');
+	const [isSubmitting, setIsSubmitting] = useState(false);
+
 	const handleChange = (event) => {
 		setForm({
 			...form,
@@ -16,11 +19,39 @@ function UserPage({ currentUser, onLogout, onSubmit }) {
 		});
 	};
 
+	const handleModeSwitch = (newMode) => {
+		setMode(newMode);
+		setError('');
+	};
+
 	const handleSubmit = (event) => {
 		event.preventDefault();
+		setError('');
 
-		const fallbackName = form.email.split('@')[0];
-		const username = (form.username || fallbackName || 'Reader').trim();
+		const email = form.email.trim();
+		const password = form.password;
+ 		const fallbackName = form.email.split('@')[0];
+                const username = (form.username || fallbackName || 'Reader').trim();
+
+		if(!email || !password){
+			setError('Email and password are required.');
+			return;
+		}
+		if(mode === 'register' && !username){
+			setError('A username is required to register.');
+			return;
+		}
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if(!emailRegex.test(email)){
+			setError('Please enter a valid email format.');
+			return;
+		}
+		if(password.length < 8){
+			setError('Password must be at least 8 characters long.');
+			return;
+		}
+
+		setIsSubmitting(true);
 
 		if (mode === 'login') {
 			loginUser(form.email, form.password)
@@ -32,6 +63,10 @@ function UserPage({ currentUser, onLogout, onSubmit }) {
 				})
 				.catch((error) => {
 					console.log(error);
+					setError(error.message || 'Invalid email or password');
+				})
+				.finally(() => {
+					setIsSubmitting(false);
 				});
 		} else {
 			registerUser(form.username, form.email, form.password)
@@ -43,6 +78,10 @@ function UserPage({ currentUser, onLogout, onSubmit }) {
 				})
 				.catch((error) => {
 					console.log(error);
+					setError(error.message || 'Registration failed. Please try again.');
+				})
+				.finally(() => {
+					setIsSubmitting(false);
 				});
 		}
 	};
