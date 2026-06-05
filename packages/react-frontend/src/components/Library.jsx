@@ -177,7 +177,7 @@ function Library({
 						) : (
 							<div className="library-list">
 								{activeBooks.map((book) => (
-									<article className="library-book" key={book.id}>
+									<article className="library-book" key={book._id}>
 										<div className="cover-block">
 											{book.thumbnail ? (
 												<img src={book.thumbnail} alt={`${book.title} cover`} />
@@ -198,7 +198,7 @@ function Library({
 														book.isFavorite ? 'favorite is-active' : 'favorite'
 													}
 													onClick={() =>
-														onUpdateBook(book.id, {
+														onUpdateBook(book._id, {
 															isFavorite: !book.isFavorite,
 														})
 													}
@@ -212,7 +212,7 @@ function Library({
 													Status
 													<select
 														onChange={(event) =>
-															onUpdateBook(book.id, {
+															onUpdateBook(book._id, {
 																status: event.target.value,
 															})
 														}
@@ -229,7 +229,7 @@ function Library({
 														max="100"
 														min="0"
 														onChange={(event) =>
-															onUpdateBook(book.id, {
+															onUpdateBook(book._id, {
 																progress: Number(event.target.value),
 															})
 														}
@@ -242,7 +242,7 @@ function Library({
 												Notes
 												<textarea
 													onChange={(event) =>
-														onUpdateBook(book.id, {
+														onUpdateBook(book._id, {
 															notes: event.target.value,
 														})
 													}
@@ -259,7 +259,7 @@ function Library({
 													Review
 												</button>
 												<button
-													onClick={() => onRemoveBook(book.id)}
+													onClick={() => onRemoveBook(book._id)}
 													type="button"
 												>
 													Remove

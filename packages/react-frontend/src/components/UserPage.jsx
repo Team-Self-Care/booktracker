@@ -26,6 +26,7 @@ function UserPage({ currentUser, onLogout, onSubmit }) {
 			loginUser(form.email, form.password)
 				.then((data) => {
 					onSubmit({
+						_id: data._id,
 						email: form.email,
 						username: data.name,
 					});
