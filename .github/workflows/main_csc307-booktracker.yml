@@ -13,7 +13,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read 
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -27,6 +27,8 @@ jobs:
         run: |
           npm install
           npm run -w express-backend start --if-present
+        env:
+            MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
