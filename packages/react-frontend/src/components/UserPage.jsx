@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { loginUser, registerUser } from '../user';
 
 function UserPage({ currentUser, onLogout, onSubmit }) {
 	const [mode, setMode] = useState('login');
@@ -21,10 +22,29 @@ function UserPage({ currentUser, onLogout, onSubmit }) {
 		const fallbackName = form.email.split('@')[0];
 		const username = (form.username || fallbackName || 'Reader').trim();
 
-		onSubmit({
-			email: form.email,
-			username,
-		});
+		if (mode === 'login') {
+			loginUser(form.email, form.password)
+				.then((data) => {
+					onSubmit({
+						email: form.email,
+						username: data.name,
+					});
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		} else {
+			registerUser(form.username, form.email, form.password)
+				.then((data) => {
+					onSubmit({
+						email: form.email,
+						username: form.username,
+					});
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		}
 	};
 
 	if (currentUser) {
@@ -36,7 +56,9 @@ function UserPage({ currentUser, onLogout, onSubmit }) {
 							<p>Account</p>
 							<h1>Welcome back, {currentUser.username}.</h1>
 						</div>
-						<div className="avatar">{currentUser.username.slice(0, 2).toUpperCase()}</div>
+						<div className="avatar">
+							{currentUser.username.slice(0, 2).toUpperCase()}
+						</div>
 					</header>
 
 					<div className="account-layout">
@@ -54,7 +76,11 @@ function UserPage({ currentUser, onLogout, onSubmit }) {
 								<span>Email</span>
 								<strong>{currentUser.email || 'Not added yet'}</strong>
 							</div>
-							<button className="secondary-action" onClick={onLogout} type="button">
+							<button
+								className="secondary-action"
+								onClick={onLogout}
+								type="button"
+							>
 								Log out
 							</button>
 						</section>
@@ -78,7 +104,11 @@ function UserPage({ currentUser, onLogout, onSubmit }) {
 				<header className="page-header">
 					<div>
 						<p>Account</p>
-						<h1>{mode === 'login' ? 'Log in to keep reading.' : 'Create your reader name.'}</h1>
+						<h1>
+							{mode === 'login'
+								? 'Log in to keep reading.'
+								: 'Create your reader name.'}
+						</h1>
 					</div>
 					<div className="avatar">BT</div>
 				</header>
