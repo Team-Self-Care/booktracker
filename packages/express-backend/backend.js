@@ -19,7 +19,10 @@ app.get('/users', (req, res) => {
 	connectDB()
 		.then(({ db }) => db.collection('users').find({}).toArray())
 		.then((result) => res.send({ users_list: result }))
-		.catch((error) => res.status(500).send({ error: error.message }));
+		.catch((error) => {
+			console.log('Database error: ' + error);
+			res.status(500).send('An error ocurred in the server.');
+		});
 });
 
 app.get('/users/:name', (req, res) => {
@@ -31,10 +34,13 @@ app.get('/users/:name', (req, res) => {
 			if (result) {
 				res.send({ user: result });
 			} else {
-				res.status(404).send({ error: 'User not found' });
+				res.status(404).send('User not found');
 			}
 		})
-		.catch((error) => res.status(500).send({ error: error.message }));
+		.catch((error) => {
+			console.log('Database error: ' + error);
+			res.status(500).send('An error ocurred in the server.');
+		});
 });
 
 app.post('/users', (req, res) => {
@@ -49,7 +55,7 @@ app.post('/users', (req, res) => {
 		email === undefined ||
 		email === ''
 	) {
-		res.status(400).send({ error: 'Name, email, and password required' });
+		res.status(400).send('Name, email, and password required');
 		return;
 	}
 
@@ -58,9 +64,16 @@ app.post('/users', (req, res) => {
 			db.collection('users').insertOne({ name, email, password })
 		)
 		.then((result) =>
-			res.status(201).send({ id: result.insertedId, name: name })
+			res.status(201).send({
+				id: result.insertedId,
+				name: name,
+				_id: result.insertedId.toString(),
+			})
 		)
-		.catch((error) => res.status(500).send({ error: error.message }));
+		.catch((error) => {
+			console.log('Database error: ' + error);
+			res.status(500).send('An error ocurred in the server.');
+		});
 });
 
 app.post('/login', (req, res) => {
@@ -73,12 +86,15 @@ app.post('/login', (req, res) => {
 		)
 		.then((user) => {
 			if (user) {
-				res.send({ success: true, name: user.name });
+				res.send({ success: true, name: user.name, _id: user._id.toString() });
 			} else {
-				res.status(401).send({ error: 'Invalid credentials' });
+				res.status(401).send('Invalid credentials');
 			}
 		})
-		.catch((error) => res.status(500).send({ error: error.message }));
+		.catch((error) => {
+			console.log('Database error: ' + error);
+			res.status(500).send('An error ocurred in the server.');
+		});
 });
 
 app.delete('/users/:name', (req, res) => {
@@ -90,10 +106,147 @@ app.delete('/users/:name', (req, res) => {
 			if (result.deletedCount === 1) {
 				res.status(204).end();
 			} else {
-				res.status(404).send({ error: 'User not found' });
+				res.status(404).send('User not found');
 			}
 		})
-		.catch((error) => res.status(500).send({ error: error.message }));
+		.catch((error) => {
+			console.log('Database error: ' + error);
+			res.status(500).send('An error ocurred in the server.');
+		});
+});
+
+app.get('/books', (req, res) => {
+	//get all books
+	const { userId } = req.query;
+
+	let query = {};
+	if (userId) {
+		query.userId = userId;
+	}
+
+	connectDB()
+		.then(({ db }) => db.collection('books').find(query).toArray())
+		.then((result) => res.send({ books_list: result }))
+		.catch((error) => {
+			console.log('Database error: ' + error);
+			res.status(500).send('An error ocurred in the server.');
+		});
+});
+
+app.post('/books', (req, res) => {
+	//add a new book to library
+	const {
+		title,
+		author,
+		description,
+		meta,
+		publishedDate,
+		rating,
+		tag,
+		thumbnail,
+		status,
+		progress,
+		notes,
+		isFavorite,
+		userId,
+	} = req.body;
+
+	if (
+		title === undefined ||
+		title === '' ||
+		author === undefined ||
+		author === ''
+	) {
+		res.status(400).send('Title and author are required');
+		return;
+	}
+
+	connectDB()
+		.then(({ db }) =>
+			db.collection('books').insertOne({
+				title: title,
+				author: author,
+				description: description || '',
+				meta: meta || '',
+				publishedDate: publishedDate || '',
+				rating: rating || '',
+				tag: tag || '',
+				thumbnail: thumbnail || '',
+				status: status || 'Want to read',
+				progress: progress || 0,
+				notes: notes || '',
+				isFavorite: isFavorite || false,
+				userId: userId || null,
+				createdAt: new Date(),
+			})
+		)
+		.then((result) =>
+			res.status(201).send({ id: result.insertedId, title: title })
+		)
+		.catch((error) => {
+			console.log('Database error: ' + error);
+			res.status(500).send('An error ocurred in the server.');
+		});
+});
+
+app.put('/books/:bookId', (req, res) => {
+	// update an existing book
+	const bookId = req.params['bookId'];
+	const { status, progress, notes, isFavorite } = req.body;
+	const updateFields = {};
+	if (status !== undefined) {
+		updateFields.status = status;
+	}
+	if (progress !== undefined) {
+		updateFields.progress = progress;
+	}
+	if (notes !== undefined) {
+		updateFields.notes = notes;
+	}
+	if (isFavorite !== undefined) {
+		updateFields.isFavorite = isFavorite;
+	}
+
+	connectDB()
+		.then(({ db }) => {
+			const { ObjectId } = require('mongodb');
+			return db
+				.collection('books')
+				.updateOne({ _id: new ObjectId(bookId) }, { $set: updateFields });
+		})
+		.then((result) => {
+			if (result.matchedCount === 1) {
+				res.status(200).send('Book updated successfully');
+			} else {
+				res.status(404).send('Book not found');
+			}
+		})
+		.catch((error) => {
+			console.log('Database error: ' + error);
+			res.status(500).send('An error ocurred in the server.');
+		});
+});
+
+app.delete('/books/:bookId', (req, res) => {
+	//delete a book from the library
+	const bookId = req.params['bookId'];
+
+	connectDB()
+		.then(({ db }) => {
+			const { ObjectId } = require('mongodb');
+			return db.collection('books').deleteOne({ _id: new ObjectId(bookId) });
+		})
+		.then((result) => {
+			if (result.deletedCount === 1) {
+				res.status(204).end();
+			} else {
+				res.status(404).send('Book not found');
+			}
+		})
+		.catch((error) => {
+			console.log('Database error: ' + error);
+			res.status(500).send('An error ocurred in the server.');
+		});
 });
 
 app.listen(port, () => {

@@ -5,6 +5,7 @@ import Reviews from './Reviews';
 import Search from './Search';
 import Table from './Library';
 import UserPage from './UserPage';
+import { fetchBooks, addBook, updateBook, deleteBook } from '../book';
 import '../style/css/index.css';
 
 function App() {
@@ -31,6 +32,17 @@ function App() {
 		localStorage.removeItem('booktracker-user');
 	}, [currentUser]);
 
+	//load books when user logs in
+	useEffect(() => {
+		if (currentUser && currentUser._id) {
+			fetchBooks(currentUser._id)
+				.then((books) => setLibraryBooks(books))
+				.catch((error) => console.log('Failed to load books: ' + error));
+		} else {
+			setLibraryBooks([]);
+		}
+	}, [currentUser]);
+
 	useEffect(() => {
 		localStorage.setItem('booktracker-library', JSON.stringify(libraryBooks));
 	}, [libraryBooks]);
@@ -44,54 +56,57 @@ function App() {
 		setActivePage('Home');
 	};
 
-	const handleAddToLibrary = (book, status = 'Want to read') => {
+	const handleAddToLibrary = async (book, status = 'Want to read') => {
+		console.log('Current user object:', currentUser);
+		console.log('Current user ID:', currentUser?._id);
+		console.log('Current user id (lowercase):', currentUser.id);
+
 		const bookId = book.id ?? `${book.title}-${book.author}`;
-		const savedAt = new Date().toISOString();
 
-		setLibraryBooks((books) => {
-			const existingBook = books.find((item) => item.id === bookId);
+		try {
+			await addBook({
+				id: bookId,
+				title: book.title,
+				author: book.author,
+				description: book.description || '',
+				meta: book.meta || '',
+				publishedDate: book.publishedDate || '',
+				rating: book.rating || '',
+				tag: book.tag || '',
+				thumbnail: book.thumbnail || '',
+				status: status,
+				progress: 0,
+				notes: '',
+				isFavorite: false,
+				userId: currentUser._id,
+			});
 
-			if (existingBook) {
-				return books.map((item) =>
-					item.id === bookId
-						? {
-								...item,
-								...book,
-								status: item.status ?? status,
-								updatedAt: savedAt,
-							}
-						: item
-				);
-			}
-
-			return [
-				{
-					...book,
-					id: bookId,
-					isFavorite: false,
-					notes: '',
-					progress: 0,
-					savedAt,
-					status,
-					updatedAt: savedAt,
-				},
-				...books,
-			];
-		});
+			//refresh books from backend
+			const books = await fetchBooks(currentUser._id);
+			setLibraryBooks(books);
+		} catch (error) {
+			console.log('Failed to add book: ' + error);
+		}
 	};
 
-	const handleUpdateLibraryBook = (bookId, updates) => {
-		setLibraryBooks((books) =>
-			books.map((book) =>
-				book.id === bookId
-					? { ...book, ...updates, updatedAt: new Date().toISOString() }
-					: book
-			)
-		);
+	const handleUpdateLibraryBook = async (bookId, updates) => {
+		try {
+			await updateBook(bookId, updates);
+			const books = await fetchBooks(currentUser._id);
+			setLibraryBooks(books);
+		} catch (error) {
+			console.log('Failed to update book: ' + error);
+		}
 	};
 
-	const handleRemoveLibraryBook = (bookId) => {
-		setLibraryBooks((books) => books.filter((book) => book.id !== bookId));
+	const handleRemoveLibraryBook = async (bookId) => {
+		try {
+			await deleteBook(bookId);
+			const books = await fetchBooks(currentUser._id);
+			setLibraryBooks(books);
+		} catch (error) {
+			console.log('Failed to delete book: ' + error);
+		}
 	};
 
 	const pages = {
