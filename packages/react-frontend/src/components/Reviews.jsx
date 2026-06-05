@@ -38,7 +38,7 @@ const publicReviews = [
 	},
 ];
 
-function Reviews({ currentUser, onNavigate }) {
+function Reviews({ currentUser, onNavigate, readerReviews, setReaderReviews }) {
 	const [addedUsers, setAddedUsers] = useState(['Avery M.', 'Mina K.']);
 	const [selectedUser, setSelectedUser] = useState('All');
 	const [userDraft, setUserDraft] = useState('');
@@ -48,7 +48,12 @@ function Reviews({ currentUser, onNavigate }) {
 		body: '',
 		rating: '5',
 	});
-	const [readerReviews, setReaderReviews] = useState([]);
+
+	const currentUserInList =
+		currentUser && !addedUsers.includes(currentUser.username)
+			? [currentUser.username]
+			: [];
+	const availableUsers = [...currentUserInList, ...addedUsers];
 	const allReviews = [...readerReviews, ...publicReviews];
 	const visibleReviews =
 		selectedUser === 'All'
@@ -58,7 +63,7 @@ function Reviews({ currentUser, onNavigate }) {
 		? allReviews.filter((review) => review.title === selectedBookTitle)
 		: [];
 	const featuredUser =
-		addedUsers.find((user) => user === selectedUser) ?? addedUsers[0];
+		availableUsers.find((user) => user === selectedUser) ?? availableUsers[0];
 	const userInitials = currentUser
 		? currentUser.username.slice(0, 2).toUpperCase()
 		: 'JL';
@@ -75,7 +80,7 @@ function Reviews({ currentUser, onNavigate }) {
 
 		const username = userDraft.trim();
 
-		if (!username || addedUsers.includes(username)) {
+		if (!username || availableUsers.includes(username)) {
 			setUserDraft('');
 			return;
 		}
@@ -97,23 +102,36 @@ function Reviews({ currentUser, onNavigate }) {
 			return;
 		}
 
-		setReaderReviews([
-			{
-				body: reviewDraft.body,
-				comments: 0,
-				rating: Number(reviewDraft.rating),
-				title: reviewDraft.title,
-				username: currentUser.username,
-			},
-			...readerReviews,
-		]);
-		setSelectedBookTitle(reviewDraft.title);
+		const newReview = {
+			body: reviewDraft.body.trim(),
+			comments: 0,
+			createdAt: new Date().toISOString(),
+			rating: Number(reviewDraft.rating),
+			title: reviewDraft.title.trim(),
+			username: currentUser.username,
+		};
 
+		setReaderReviews((reviews) => [newReview, ...reviews]);
+
+		if (!addedUsers.includes(currentUser.username)) {
+			setAddedUsers((users) => [currentUser.username, ...users]);
+		}
+
+		setSelectedUser('All');
+		setSelectedBookTitle(newReview.title);
 		setReviewDraft({
 			title: '',
 			body: '',
 			rating: '5',
 		});
+	};
+
+	const handleUseReviewTitle = (title) => {
+		setReviewDraft((draft) => ({
+			...draft,
+			title,
+		}));
+		setSelectedBookTitle(title);
 	};
 
 	return (
@@ -162,7 +180,7 @@ function Reviews({ currentUser, onNavigate }) {
 								>
 									All
 								</button>
-								{addedUsers.map((user) => (
+								{availableUsers.map((user) => (
 									<button
 										className={
 											selectedUser === user ? 'chip is-active' : 'chip'
@@ -298,7 +316,7 @@ function Reviews({ currentUser, onNavigate }) {
 											{review.comments} comments . {review.rating} rating
 										</span>
 										<button
-											onClick={() => setSelectedBookTitle(review.title)}
+											onClick={() => handleUseReviewTitle(review.title)}
 											type="button"
 										>
 											Comment
