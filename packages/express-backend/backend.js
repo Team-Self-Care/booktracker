@@ -249,6 +249,105 @@ app.delete('/books/:bookId', (req, res) => {
 		});
 });
 
+app.get('/reviews', (req, res) => {
+	//get all reviews
+	connectDB()
+		.then(({ db }) => db.collection('reviews').find({}).toArray())
+		.then((result) => res.send({ reviews_list: result }))
+		.catch((error) => {
+			console.log('Database error: ' + error);
+			res.status(500).send('An error ocurred in the server.');
+		});
+});
+
+app.get('/reviews/user/:username', (req, res) => {
+	//get review by username
+	const username = req.params['username'];
+
+	connectDB()
+		.then(({ db }) =>
+			db.collection('reviews').find({ username: username }).toArray()
+		)
+		.then((result) => res.send({ reviews_list: result }))
+		.catch((error) => {
+			console.log('Database error: ' + error);
+			res.status(500).send('An error ocurred in the server.');
+		});
+});
+
+app.get('/reviews/book/:title', (req, res) => {
+	//get reviews by title
+	const title = req.params['title'];
+
+	connectDB()
+		.then(({ db }) => db.collection('reviews').find({ title: title }).toArray())
+		.then((result) => res.send({ reviews_list: result }))
+		.catch((error) => {
+			console.log('Database error: ' + error);
+			res.status(500).send('An error ocurred in the server.');
+		});
+});
+
+app.post('/reviews', (req, res) => {
+	//add new review
+	const { title, body, rating, username } = req.body;
+
+	if (
+		title === undefined ||
+		title === '' ||
+		body === undefined ||
+		body === '' ||
+		rating === undefined ||
+		rating === '' ||
+		username === undefined ||
+		username === ''
+	) {
+		res.status(400).send('Title, body, rating, and username are required');
+		return;
+	}
+
+	connectDB()
+		.then(({ db }) =>
+			db.collection('reviews').insertOne({
+				title: title,
+				body: body,
+				rating: Number(rating),
+				username: username,
+				comments: 0,
+				createdAt: new Date(),
+			})
+		)
+		.then((result) =>
+			res.status(201).send({ id: result.insertedId, title: title })
+		)
+		.catch((error) => {
+			console.log('Database error: ' + error);
+			res.status(500).send('An error ocurred in the server.');
+		});
+});
+
+app.delete('/reviews/:id', (req, res) => {
+	//delete revirw
+	const id = req.params['id'];
+
+	connectDB()
+		.then(({ db }) => {
+			const { ObjectId } = require('mongodb');
+			return db.collection('reviews').deleteOne({ _id: new ObjectId(id) });
+		})
+		.then((result) => {
+			if (result.deletedCount === 1) {
+				res.status(204).end();
+			} else {
+				res.status(404).send('Review not found');
+			}
+		})
+		.catch((error) => {
+			console.log('Database error: ' + error);
+			res.status(500).send('An error ocurred in the server.');
+		});
+});
+
 app.listen(port, () => {
 	console.log(`REST API is listening on port ${port}`);
 });
