@@ -348,6 +348,6 @@ app.delete('/reviews/:id', (req, res) => {
 		});
 });
 
-app.listen(port, () => {
+app.listen(process.env.PORT || port, () => {
 	console.log(`REST API is listening on port ${port}`);
 });
