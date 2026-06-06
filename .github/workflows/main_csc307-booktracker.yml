@@ -21,15 +21,26 @@ jobs:
           node-version: '24.x'
 
       - name: npm install
-        run: npm install --install-strategy=nested
+        run: npm install
         working-directory: packages/express-backend
+
+      - name: Verify node_modules exists
+        run: ls packages/express-backend/node_modules | head -10
+
+      - name: Zip artifact for deployment
+        run: |
+          cd packages/express-backend
+          zip -r $GITHUB_WORKSPACE/release.zip . -x "*.git*"
+
+      - name: Verify zip contains node_modules
+        run: unzip -l $GITHUB_WORKSPACE/release.zip | grep "node_modules/express" | head -10
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: packages/express-backend
-
+          path: release.zip
+          if-no-files-found: error
 
   deploy:
     runs-on: ubuntu-latest
@@ -41,10 +52,13 @@ jobs:
         with:
           name: node-app
 
+      - name: Verify downloaded zip
+        run: unzip -l release.zip | grep "node_modules/express" | head -5
+
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'csc307-booktracker'
           slot-name: 'Production'
-          package: .
+          package: release.zip
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_2DF3CD8DD21B436494CCE108969507FB }}
