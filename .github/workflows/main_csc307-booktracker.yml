@@ -1,6 +1,3 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Build and deploy Node.js app to Azure Web App - csc307-booktracker
 
 on:
@@ -23,18 +20,13 @@ jobs:
         with:
           node-version: '24.x'
 
-      - name: npm install, build, and test
-        run: |
-          cd ./packages/express-backend
-          npm install --prefix .
-        env:
-            MONGODB_URI: ${{ secrets.MONGODB_URI }}
+      - name: npm install
+        run: npm install --install-strategy=nested
         working-directory: packages/express-backend
 
       - name: Zip artifact for deployment
-        run: |
-            cd ./packages/express-backend
-            zip -r $GITHUB_WORKSPACE/release.zip *
+        run: zip -r $GITHUB_WORKSPACE/release.zip .
+        working-directory: packages/express-backend
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -45,23 +37,14 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    
+
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: node-app
 
-      - name: Check zip contents
-        run: unzip -l release.zip | head -30
-
-      - name: npm install for deployment
-        run: |
-            cd ./packages/express-backend
-            npm install --install-strategy=nested
-      
-      - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'csc307-booktracker'
