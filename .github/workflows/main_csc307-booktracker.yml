@@ -32,25 +32,23 @@ jobs:
       - name: Bundle backend + node_modules for deploy
         run: |
             mkdir -p deploy
-
-            # Copy backend files to deploy root
             cp -r packages/express-backend/. deploy/
-
-            # Verify backend.js is at deploy root
-            echo "Checking deploy root:"
-            ls deploy/
-
-            # Copy and tar node_modules
             cp -r node_modules deploy/node_modules
+
             cd deploy
-            tar -czf node_modules.tar.gz node_modules
+
+            # Tar the CONTENTS of node_modules, not the folder itself
+            cd node_modules
+            tar -czf ../node_modules.tar.gz .
+            cd ..
             rm -rf node_modules
 
-            # Verify final structure before zipping
             echo "Final deploy structure:"
             ls -la
 
             zip -ry $GITHUB_WORKSPACE/release.zip .
+            echo "Verify tar contents (should show package names, not 'node_modules/'):"
+            tar -tzf node_modules.tar.gz | head -10
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
