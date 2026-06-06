@@ -25,7 +25,7 @@ jobs:
 
       - name: npm install, build, and test
         run: |
-          cd packages/express-backend
+          cd ./packages/express-backend
           npm install --prefix .
         env:
             MONGODB_URI: ${{ secrets.MONGODB_URI }}
@@ -33,7 +33,7 @@ jobs:
 
       - name: Zip artifact for deployment
         run: |
-            cd packages/express-backend
+            cd ./packages/express-backend
             zip -r $GITHUB_WORKSPACE/release.zip *
 
       - name: Upload artifact for deployment job
@@ -57,7 +57,7 @@ jobs:
 
       - name: npm install for deployment
         run: |
-            cd packages/express-backend
+            cd ./packages/express-backend
             npm install --install-strategy=nested
       
       - name: 'Deploy to Azure Web App'
