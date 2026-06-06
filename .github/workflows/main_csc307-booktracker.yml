@@ -21,7 +21,7 @@ jobs:
           node-version: '24.x'
 
       - name: npm install
-        run: npm install
+        run: npm install --ignore-scripts --prefix packages/express-backend
         working-directory: packages/express-backend
 
       - name: Verify node_modules exists
