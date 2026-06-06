@@ -54,30 +54,30 @@ function UserPage({ currentUser, onLogout, onSubmit }) {
 		setIsSubmitting(true);
 
 		if (mode === 'login') {
-			loginUser(form.email, form.password)
+			loginUser(email, password)
 				.then((data) => {
 					onSubmit({
-						email: form.email,
+						email: email,
 						username: data.name,
 					});
 				})
 				.catch((error) => {
-					console.log(error);
+					console.error("Login Error:", err);
 					setError(error.message || 'Invalid email or password');
 				})
 				.finally(() => {
 					setIsSubmitting(false);
 				});
 		} else {
-			registerUser(form.username, form.email, form.password)
+			registerUser(username, email, password)
 				.then((data) => {
 					onSubmit({
-						email: form.email,
-						username: form.username,
+						email: email,
+						username: username,
 					});
 				})
 				.catch((error) => {
-					console.log(error);
+					console.error("Rgeistration Error:", err);
 					setError(error.message || 'Registration failed. Please try again.');
 				})
 				.finally(() => {
@@ -157,14 +157,14 @@ function UserPage({ currentUser, onLogout, onSubmit }) {
 						<div className="auth-switch">
 							<button
 								className={mode === 'login' ? 'active' : ''}
-								onClick={() => setMode('login')}
+								onClick={() => handleModeSwitch('login')}
 								type="button"
 							>
 								Log in
 							</button>
 							<button
 								className={mode === 'register' ? 'active' : ''}
-								onClick={() => setMode('register')}
+								onClick={() => handleModeSwitch('register')}
 								type="button"
 							>
 								Register
@@ -172,6 +172,21 @@ function UserPage({ currentUser, onLogout, onSubmit }) {
 						</div>
 
 						<form className="auth-form" onSubmit={handleSubmit}>
+							{error && (
+								<div style={{
+									color: '#721c24',
+                                                                        backgroundColor: '#f8d7da',
+                                                                        border: '1px solid #f5c6cb',
+                                                                        padding: '10px',
+                                                                        borderRadius: '4px',
+                                                                        marginBottom: '15px',
+                                                                        fontSize: '14px',
+                                                                        fontWeight: '500'
+                                                                }}>
+                                                                        {error}
+                                                                </div>
+                                                        )}							
+
 							{mode === 'register' && (
 								<label>
 									Username
