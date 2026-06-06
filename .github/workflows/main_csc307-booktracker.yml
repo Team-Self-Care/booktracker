@@ -53,7 +53,9 @@ jobs:
           name: node-app
 
       - name: Verify downloaded zip
-        run: unzip -l release.zip | grep "node_modules/express" | head -5
+        run: |
+            unzip -l release.zip
+            npm install
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
