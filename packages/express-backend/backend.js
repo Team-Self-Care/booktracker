@@ -2,6 +2,7 @@
 
 const express = require('express');
 const cors = require('cors');
+const bcrypt = require('bcrypt');
 const { connectDB } = require('./db');
 
 const app = express();
@@ -43,7 +44,7 @@ app.get('/users/:name', (req, res) => {
 		});
 });
 
-app.post('/users', (req, res) => {
+app.post('/users', async(req, res) => {
 	//register a new user (with email, name, password)
 	const { name, email, password } = req.body;
 
@@ -59,60 +60,21 @@ app.post('/users', (req, res) => {
 		return;
 	}
 
-	connectDB()
-		.then(({ db }) =>
-			db.collection('users').insertOne({ name, email, password })
-		)
-		.then((result) =>
-			res.status(201).send({
-				id: result.insertedId,
-				name: name,
-				_id: result.insertedId.toString(),
-			})
-		)
-		.catch((error) => {
-			console.log('Database error: ' + error);
-			res.status(500).send('An error ocurred in the server.');
+	try {
+		const hashedPassword = await bcrypt.hash(password, 12);
+		const { db } = await connectDB();
+		const result = await db.collection('users').insertOne({
+			name,
+			email,
+			password: hashedPassword
 		});
-});
+		
+		res.status(201).send({id: result.insertedId, name: name, _id: result.insertedId.toString()});
 
-app.post('/login', (req, res) => {
-	//login user
-	const { email, password } = req.body;
-
-	connectDB()
-		.then(({ db }) =>
-			db.collection('users').findOne({ email: email, password: password })
-		)
-		.then((user) => {
-			if (user) {
-				res.send({ success: true, name: user.name, _id: user._id.toString() });
-			} else {
-				res.status(401).send('Invalid credentials');
-			}
-		})
-		.catch((error) => {
-			console.log('Database error: ' + error);
-			res.status(500).send('An error ocurred in the server.');
-		});
-});
-
-app.delete('/users/:name', (req, res) => {
-	const name = req.params['name'];
-
-	connectDB()
-		.then(({ db }) => db.collection('users').deleteOne({ name: name }))
-		.then((result) => {
-			if (result.deletedCount === 1) {
-				res.status(204).end();
-			} else {
-				res.status(404).send('User not found');
-			}
-		})
-		.catch((error) => {
-			console.log('Database error: ' + error);
-			res.status(500).send('An error ocurred in the server.');
-		});
+	}
+	catch(error){
+		res.status(500).send({error: error.message});
+	}
 });
 
 app.get('/books', (req, res) => {
