@@ -25,7 +25,8 @@ jobs:
 
       - name: npm install, build, and test
         run: |
-          npm install
+          cd packages/express-backend
+          npm install --prefix .
         env:
             MONGODB_URI: ${{ secrets.MONGODB_URI }}
         working-directory: packages/express-backend
@@ -53,6 +54,11 @@ jobs:
 
       - name: Check zip contents
         run: unzip -l release.zip | head -30
+
+      - name: npm install for deployment
+        run: |
+            cd packages/express-backend
+            npm install --install-strategy=nested
       
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
