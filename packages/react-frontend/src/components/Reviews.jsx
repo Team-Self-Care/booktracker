@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { fetchReviews, addReview, deleteReview } from '../review';
 
 const publicReviews = [
 	{
@@ -49,12 +50,27 @@ function Reviews({ currentUser, onNavigate, readerReviews, setReaderReviews }) {
 		rating: '5',
 	});
 
+	const [reviews, setReviews] = useState([]);
+	const [isLoading, setIsLoading] = useState(true);
+
+	const loadReviews = async () => {
+		setIsLoading(true);
+		try {
+			const data = await fetchReviews();
+			setReviews(data);
+		} catch (error) {
+			console.log('Failed to load reviews: ' + error);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
 	const currentUserInList =
 		currentUser && !addedUsers.includes(currentUser.username)
 			? [currentUser.username]
 			: [];
 	const availableUsers = [...currentUserInList, ...addedUsers];
-	const allReviews = [...readerReviews, ...publicReviews];
+	const allReviews = [...reviews];
 	const visibleReviews =
 		selectedUser === 'All'
 			? allReviews
@@ -68,6 +84,11 @@ function Reviews({ currentUser, onNavigate, readerReviews, setReaderReviews }) {
 		? currentUser.username.slice(0, 2).toUpperCase()
 		: 'JL';
 
+	useEffect(() => {
+		if (currentUser) {
+			loadReviews();
+		}
+	}, [currentUser]);
 	const handleChange = (event) => {
 		setReviewDraft({
 			...reviewDraft,
@@ -90,7 +111,7 @@ function Reviews({ currentUser, onNavigate, readerReviews, setReaderReviews }) {
 		setUserDraft('');
 	};
 
-	const handleSubmit = (event) => {
+	const handleSubmit = async (event) => {
 		event.preventDefault();
 
 		if (!currentUser) {
@@ -102,28 +123,50 @@ function Reviews({ currentUser, onNavigate, readerReviews, setReaderReviews }) {
 			return;
 		}
 
-		const newReview = {
-			body: reviewDraft.body.trim(),
-			comments: 0,
-			createdAt: new Date().toISOString(),
-			rating: Number(reviewDraft.rating),
-			title: reviewDraft.title.trim(),
-			username: currentUser.username,
-		};
+		try {
+			await addReview({
+				title: reviewDraft.title.trim(),
+				body: reviewDraft.body.trim(),
+				rating: Number(reviewDraft.rating),
+				username: currentUser.username,
+			});
 
-		setReaderReviews((reviews) => [newReview, ...reviews]);
+			await loadReviews();
 
-		if (!addedUsers.includes(currentUser.username)) {
-			setAddedUsers((users) => [currentUser.username, ...users]);
+			const newReview = {
+				body: reviewDraft.body.trim(),
+				comments: 0,
+				createdAt: new Date().toISOString(),
+				rating: Number(reviewDraft.rating),
+				title: reviewDraft.title.trim(),
+				username: currentUser.username,
+			};
+
+			setReaderReviews((reviews) => [newReview, ...reviews]);
+
+			if (!addedUsers.includes(currentUser.username)) {
+				setAddedUsers((users) => [currentUser.username, ...users]);
+			}
+
+			setSelectedUser('All');
+			setSelectedBookTitle(newReview.title);
+			setReviewDraft({
+				title: '',
+				body: '',
+				rating: '5',
+			});
+		} catch (error) {
+			console.log('Failed to add review: ' + error);
 		}
+	};
 
-		setSelectedUser('All');
-		setSelectedBookTitle(newReview.title);
-		setReviewDraft({
-			title: '',
-			body: '',
-			rating: '5',
-		});
+	const handleDeleteReview = async (reviewId) => {
+		try {
+			await deleteReview(reviewId);
+			await loadReviews();
+		} catch (error) {
+			console.log('Failed to delete review: ' + error);
+		}
 	};
 
 	const handleUseReviewTitle = (title) => {
@@ -303,27 +346,40 @@ function Reviews({ currentUser, onNavigate, readerReviews, setReaderReviews }) {
 							<span>{visibleReviews.length} updates</span>
 						</div>
 						<div className="review-feed">
-							{visibleReviews.map((review, index) => (
-								<article
-									className="feed-card"
-									key={`${review.username}-${review.title}-${index}`}
-								>
-									<span className="review-author">{review.username}</span>
-									<h3>{review.title}</h3>
-									<p>{review.body}</p>
-									<footer>
-										<span>
-											{review.comments} comments . {review.rating} rating
-										</span>
-										<button
-											onClick={() => handleUseReviewTitle(review.title)}
-											type="button"
-										>
-											Comment
-										</button>
-									</footer>
-								</article>
-							))}
+							{visibleReviews.map((review, index) => {
+								return (
+									<article
+										className="feed-card"
+										key={`${review.username}-${review.title}-${index}`}
+									>
+										<span className="review-author">{review.username}</span>
+										<h3>{review.title}</h3>
+										<p>{review.body}</p>
+										<footer>
+											<span>
+												{review.comments} comments . {review.rating} rating
+											</span>
+											<button
+												onClick={() => handleUseReviewTitle(review.title)}
+												type="button"
+											>
+												Comment
+											</button>
+											{currentUser &&
+												review.username === currentUser.username && (
+													<button
+														onClick={() => {
+															handleDeleteReview(review._id);
+														}}
+														type="button"
+													>
+														Remove
+													</button>
+												)}
+										</footer>
+									</article>
+								);
+							})}
 						</div>
 					</section>
 				</div>
