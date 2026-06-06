@@ -7,6 +7,17 @@ const { connectDB } = require('./db');
 
 const app = express();
 const port = process.env.PORT || 8000;
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function normalizeEmail(email) {
+	return String(email || '')
+		.trim()
+		.toLowerCase();
+}
+
+function normalizeName(name) {
+	return String(name || '').trim();
+}
 
 app.use(cors()); //enables all cors requests
 app.use(express.json());
@@ -44,36 +55,94 @@ app.get('/users/:name', (req, res) => {
 		});
 });
 
-app.post('/users', async(req, res) => {
-	//register a new user (with email, name, password)
-	const { name, email, password } = req.body;
+app.post('/login', async (req, res) => {
+	const email = normalizeEmail(req.body.email);
+	const password = req.body.password || '';
 
-	if (
-		name === undefined ||
-		name === '' ||
-		password === undefined ||
-		password === '' ||
-		email === undefined ||
-		email === ''
-	) {
-		res.status(400).send('Name, email, and password required');
+	if (!email || !password) {
+		res.status(400).send({ message: 'Email and password are required.' });
 		return;
 	}
 
 	try {
-		const hashedPassword = await bcrypt.hash(password, 12);
 		const { db } = await connectDB();
+		const user = await db.collection('users').findOne({ email });
+
+		if (!user) {
+			res.status(401).send({ message: 'Invalid email or password.' });
+			return;
+		}
+
+		const isPasswordValid = await bcrypt.compare(password, user.password);
+		if (!isPasswordValid) {
+			res.status(401).send({ message: 'Invalid email or password.' });
+			return;
+		}
+
+		res.status(200).send({
+			_id: user._id.toString(),
+			email: user.email,
+			name: user.name,
+		});
+	} catch (error) {
+		console.log('Database error: ' + error);
+		res.status(500).send({ message: 'An error occurred in the server.' });
+	}
+});
+
+app.post('/users', async (req, res) => {
+	//register a new user (with email, name, password)
+	const name = normalizeName(req.body.name);
+	const email = normalizeEmail(req.body.email);
+	const password = req.body.password || '';
+
+	if (!name || !email || !password) {
+		res
+			.status(400)
+			.send({ message: 'Name, email, and password are required.' });
+		return;
+	}
+	if (!emailRegex.test(email)) {
+		res.status(400).send({ message: 'Please enter a valid email format.' });
+		return;
+	}
+	if (password.length < 8) {
+		res
+			.status(400)
+			.send({ message: 'Password must be at least 8 characters long.' });
+		return;
+	}
+
+	try {
+		const { db } = await connectDB();
+		const existingUser = await db.collection('users').findOne({
+			$or: [{ email }, { name }],
+		});
+
+		if (existingUser) {
+			const duplicateField =
+				existingUser.email === email ? 'email' : 'username';
+			res
+				.status(409)
+				.send({ message: `That ${duplicateField} is already taken.` });
+			return;
+		}
+
+		const hashedPassword = await bcrypt.hash(password, 12);
 		const result = await db.collection('users').insertOne({
 			name,
 			email,
-			password: hashedPassword
+			password: hashedPassword,
 		});
-		
-		res.status(201).send({id: result.insertedId, name: name, _id: result.insertedId.toString()});
 
-	}
-	catch(error){
-		res.status(500).send({error: error.message});
+		res.status(201).send({
+			id: result.insertedId,
+			name: name,
+			_id: result.insertedId.toString(),
+		});
+	} catch (error) {
+		console.log('Database error: ' + error);
+		res.status(500).send({ message: 'An error occurred in the server.' });
 	}
 });
 

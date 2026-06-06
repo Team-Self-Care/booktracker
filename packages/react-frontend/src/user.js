@@ -1,5 +1,28 @@
 const API_URL =
+	import.meta.env.VITE_API_URL ||
 	'https://csc307-booktracker-hya2bfh2bgfxd2dk.eastus-01.azurewebsites.net';
+
+async function readResponseBody(response) {
+	const text = await response.text();
+
+	if (!text) {
+		return {};
+	}
+
+	try {
+		return JSON.parse(text);
+	} catch {
+		return { message: text };
+	}
+}
+
+function getErrorMessage(data, fallbackMessage) {
+	if (typeof data === 'string') {
+		return data;
+	}
+
+	return data?.message || data?.error || fallbackMessage;
+}
 
 export async function loginUser(email, password) {
 	const response = await fetch(`${API_URL}/login`, {
@@ -13,10 +36,10 @@ export async function loginUser(email, password) {
 
 	if (response.status === 200 || response.status === 201) {
 		//200 = ok/success, 201 = created
-		return response.json();
+		return readResponseBody(response);
 	} else {
-		const error = await response.json();
-		throw new Error('Login failed');
+		const error = await readResponseBody(response);
+		throw new Error(getErrorMessage(error, 'Login failed'));
 	}
 }
 
@@ -32,10 +55,10 @@ export async function registerUser(name, email, password) {
 
 	if (response.status === 201) {
 		//201 = created
-		return response.json();
+		return readResponseBody(response);
 	} else {
-		const error = await response.json();
-		throw new Error('Registration failed');
+		const error = await readResponseBody(response);
+		throw new Error(getErrorMessage(error, 'Registration failed'));
 	}
 }
 
