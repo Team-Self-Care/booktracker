@@ -31,14 +31,19 @@ jobs:
 
       - name: Bundle backend + node_modules for deploy
         run: |
-          mkdir -p deploy
-          cp -r packages/express-backend/. deploy/
-          cp -r node_modules deploy/node_modules
-          cd deploy
-          zip -ry $GITHUB_WORKSPACE/release.zip .
-          echo "Zip size: $(du -sh $GITHUB_WORKSPACE/release.zip)"
-          echo "Verifying express in zip:"
-          unzip -l $GITHUB_WORKSPACE/release.zip | grep "node_modules/express" | head -5
+            mkdir -p deploy
+            cp -r packages/express-backend/. deploy/
+            cp -r node_modules deploy/node_modules
+
+            # Azure expects node_modules as a tar.gz
+            cd deploy
+            tar -czf node_modules.tar.gz node_modules
+            rm -rf node_modules
+
+            zip -ry $GITHUB_WORKSPACE/release.zip .
+            echo "Zip size: $(du -sh $GITHUB_WORKSPACE/release.zip)"
+            echo "Verifying tarball in zip:"
+            unzip -l $GITHUB_WORKSPACE/release.zip | grep "node_modules.tar.gz"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
